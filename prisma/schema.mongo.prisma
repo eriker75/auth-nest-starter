@@ -1,4 +1,4 @@
-// MongoDB Schema - Para datos flexibles y no estructurados
+// MongoDB Schema - For flexible and unstructured data
 generator client {
   provider = "prisma-client-js"
   output   = "../node_modules/@prisma/mongo-client"
@@ -10,12 +10,12 @@ datasource db {
 }
 
 // ========================================
-// MODELOS FLEXIBLES (MongoDB)
+// FLEXIBLE MODELS (MongoDB)
 // ========================================
 
 model UserProfile {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String   @unique // Referencia al User de PostgreSQL
+  userId      String   @unique // Reference to PostgreSQL User
   bio         String?
   state       String?
   address     String?
@@ -25,8 +25,8 @@ model UserProfile {
   latitude    Float?
   longitude   Float?
   socialLinks Json?    // { twitter, linkedin, github, etc }
-  preferences Json?    // Preferencias flexibles del usuario
-  metadata    Json?    // Cualquier metadata adicional
+  preferences Json?    // User flexible preferences
+  metadata    Json?    // Any additional metadata
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -35,11 +35,11 @@ model UserProfile {
 
 model UserActivity {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId     String   // Referencia al User de PostgreSQL
+  userId     String   // Reference to PostgreSQL User
   action     String   // login, logout, view_course, complete_lesson, etc
-  resource   String?  // Recurso afectado
-  resourceId String?  // ID del recurso
-  metadata   Json?    // Información adicional de la actividad
+  resource   String?  // Affected resource
+  resourceId String?  // Resource ID
+  metadata   Json?    // Additional activity information
   ipAddress  String?
   userAgent  String?
   timestamp  DateTime @default(now())
@@ -52,8 +52,8 @@ model UserActivity {
 
 model UserSetting {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   // Referencia al User de PostgreSQL
-  settings  Json     // Todas las configuraciones del usuario en formato JSON
+  userId    String   // Reference to PostgreSQL User
+  settings  Json     // All user settings in JSON format
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -63,11 +63,11 @@ model UserSetting {
 
 model LessonContent {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  lessonId    String   @unique // Referencia a Lesson de PostgreSQL
-  content     Json     // Contenido flexible del curso (markdown, HTML, bloques, etc)
+  lessonId    String   @unique // Reference to PostgreSQL Lesson
+  content     Json     // Flexible course content (markdown, HTML, blocks, etc)
   resources   Json?    // { videos: [], audios: [], documents: [] }
-  exercises   Json?    // Ejercicios interactivos
-  attachments Json?    // Archivos adjuntos
+  exercises   Json?    // Interactive exercises
+  attachments Json?    // File attachments
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -76,14 +76,14 @@ model LessonContent {
 
 model LessonProgress {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId          String   // Referencia al User de PostgreSQL
-  lessonId        String   // Referencia a Lesson de PostgreSQL
-  enrollmentId    String   // Referencia a Enrollment de PostgreSQL
+  userId          String   // Reference to PostgreSQL User
+  lessonId        String   // Reference to PostgreSQL Lesson
+  enrollmentId    String   // Reference to PostgreSQL Enrollment
   completedSteps  Json?    // { step1: true, step2: false, ... }
-  quizResults     Json?    // Resultados de quizzes
-  timeSpent       Int?     // Tiempo en segundos
-  lastPosition    String?  // Última posición en el contenido
-  notes           String?  // Notas del estudiante
+  quizResults     Json?    // Quiz results
+  timeSpent       Int?     // Time in seconds
+  lastPosition    String?  // Last position in content
+  notes           String?  // Student notes
   isCompleted     Boolean  @default(false)
   completedAt     DateTime?
   createdAt       DateTime @default(now())
@@ -99,14 +99,14 @@ model LessonProgress {
 model ChatMessage {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   senderId     String   // User ID
-  receiverId   String?  // User ID (null para mensajes de grupo)
-  roomId       String?  // Para chats grupales o de curso
+  receiverId   String?  // User ID (null for group messages)
+  roomId       String?  // For group or course chats
   message      String
   messageType  String   @default("text") // text, image, audio, video, file
-  attachments  Json?    // URLs de archivos adjuntos
+  attachments  Json?    // File attachment URLs
   isRead       Boolean  @default(false)
   readAt       DateTime?
-  metadata     Json?    // Información adicional
+  metadata     Json?    // Additional information
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -119,11 +119,11 @@ model ChatMessage {
 
 model Notification {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   // Destinatario
+  userId    String   // Recipient
   type      String   // new_message, course_update, achievement, etc
   title     String
   message   String
-  data      Json?    // Datos adicionales de la notificación
+  data      Json?    // Additional notification data
   isRead    Boolean  @default(false)
   readAt    DateTime?
   createdAt DateTime @default(now())
@@ -142,7 +142,7 @@ model Achievement {
   description String?
   icon        String?
   points      Int?
-  metadata    Json?    // Información adicional del logro
+  metadata    Json?    // Additional achievement information
   earnedAt    DateTime @default(now())
 
   @@map("achievements")
@@ -153,11 +153,11 @@ model Achievement {
 
 model AuditLog {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId     String?  // Usuario que realizó la acción
+  userId     String?  // User who performed the action
   action     String   // create, update, delete, login, etc
   entity     String   // User, Course, Lesson, etc
-  entityId   String?  // ID de la entidad afectada
-  changes    Json?    // Cambios realizados (before/after)
+  entityId   String?  // ID of affected entity
+  changes    Json?    // Changes made (before/after)
   ipAddress  String?
   userAgent  String?
   metadata   Json?

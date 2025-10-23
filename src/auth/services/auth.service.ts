@@ -3,29 +3,29 @@ import {
   UnauthorizedException,
   BadRequestException,
 } from '@nestjs/common';
-import { PrismaPostgreService } from '../../database/prisma-postgre.service';
+import { PrismaPostgresService } from '../../database/prisma-postgres.service';
 import { LoginUserDto } from '../dto/login-user.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaPostgreService) {}
+  constructor(private readonly prisma: PrismaPostgresService) {}
 
   /**
-   * Método para realizar el login de un usuario
-   * @param loginDto - Datos de login (email/username, password, role)
-   * @returns Usuario autenticado y token (por implementar JWT)
+   * Method to perform user login
+   * @param loginDto - Login data (email/username, password, role)
+   * @returns Authenticated user and token (JWT implementation pending)
    */
   async login(loginDto: LoginUserDto) {
     const { email, username, password, role } = loginDto;
 
-    // Validar que al menos email o username estén presentes
+    // Validate that at least email or username are present
     if (!email && !username) {
       throw new BadRequestException(
-        'Email o username son requeridos para el login',
+        'Email or username are required for login',
       );
     }
 
-    // Buscar el usuario por email o username
+    // Find user by email or username
     const user = await this.prisma.user.findFirst({
       where: {
         OR: [
@@ -35,28 +35,28 @@ export class AuthService {
       },
     });
 
-    // Validar que el usuario exista
+    // Validate that user exists
     if (!user) {
-      throw new UnauthorizedException('Credenciales inválidas');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Validar que el usuario esté activo
+    // Validate that user is active
     if (!user.isActive) {
       throw new UnauthorizedException(
-        'Usuario inactivo, contacte al administrador',
+        'User is inactive, contact administrator',
       );
     }
 
-    // TODO: Implementar comparación de contraseñas con bcrypt
+    // TODO: Implement password comparison with bcrypt
     // const isPasswordValid = await bcrypt.compare(password, user.password);
-    // Por ahora comparación simple (INSEGURO - solo para desarrollo)
+    // For now simple comparison (INSECURE - development only)
     const isPasswordValid = password === user.password;
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Credenciales inválidas');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Actualizar último login
+    // Update last login
     await this.prisma.user.update({
       where: { id: user.id },
       data: {
@@ -65,24 +65,24 @@ export class AuthService {
       },
     });
 
-    // TODO: Implementar generación de JWT token
+    // TODO: Implement JWT token generation
     // const token = this.jwtService.sign({ id: user.id, email: user.email, role });
 
-    // Remover password de la respuesta
+    // Remove password from response
     const { password: _, ...userWithoutPassword } = user;
 
     return {
       success: true,
-      message: 'Login exitoso',
+      message: 'Login successful',
       user: userWithoutPassword,
-      // token, // Descomentar cuando se implemente JWT
+      // token, // Uncomment when JWT is implemented
     };
   }
 
   /**
-   * Método para realizar el logout de un usuario
-   * @param userId - ID del usuario
-   * @returns Confirmación de logout
+   * Method to perform user logout
+   * @param userId - User ID
+   * @returns Logout confirmation
    */
   async logout(userId: string) {
     await this.prisma.user.update({
@@ -94,25 +94,25 @@ export class AuthService {
 
     return {
       success: true,
-      message: 'Logout exitoso',
+      message: 'Logout successful',
     };
   }
 
   /**
-   * Método para validar un token JWT
-   * @param token - Token JWT
-   * @returns Datos del usuario decodificados del token
+   * Method to validate a JWT token
+   * @param token - JWT token
+   * @returns Decoded user data from token
    */
   async validateToken(token: string) {
-    // TODO: Implementar validación de JWT
+    // TODO: Implement JWT validation
     // return this.jwtService.verify(token);
-    throw new BadRequestException('Validación de token no implementada');
+    throw new BadRequestException('Token validation not implemented');
   }
 
   /**
-   * Método para refrescar un token JWT
-   * @param userId - ID del usuario
-   * @returns Nuevo token JWT
+   * Method to refresh a JWT token
+   * @param userId - User ID
+   * @returns New JWT token
    */
   async refreshToken(userId: string) {
     const user = await this.prisma.user.findUnique({
@@ -120,16 +120,16 @@ export class AuthService {
     });
 
     if (!user || !user.isActive) {
-      throw new UnauthorizedException('Usuario no válido');
+      throw new UnauthorizedException('Invalid user');
     }
 
-    // TODO: Implementar generación de nuevo JWT token
+    // TODO: Implement new JWT token generation
     // const token = this.jwtService.sign({ id: user.id, email: user.email });
 
     return {
       success: true,
-      message: 'Token refrescado',
-      // token, // Descomentar cuando se implemente JWT
+      message: 'Token refreshed',
+      // token, // Uncomment when JWT is implemented
     };
   }
 }

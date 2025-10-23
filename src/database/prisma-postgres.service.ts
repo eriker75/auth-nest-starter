@@ -3,11 +3,11 @@ import { PrismaClient } from '@prisma/postgres-client';
 import { ConfigService } from '@nestjs/config';
 
 /**
- * Servicio de Prisma para PostgreSQL
- * Gestiona la conexión a la base de datos PostgreSQL para datos estructurados
+ * Prisma Service for PostgreSQL
+ * Manages PostgreSQL database connection for structured data
  */
 @Injectable()
-export class PrismaPostgreService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+export class PrismaPostgresService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor(private configService: ConfigService) {
     const nodeEnv = configService.get<string>('NODE_ENV');
     super({
@@ -39,7 +39,7 @@ export class PrismaPostgreService extends PrismaClient implements OnModuleInit, 
   }
 
   /**
-   * Limpia todas las tablas (útil para testing)
+   * Clean all tables (useful for testing)
    */
   async cleanDatabase() {
     if (this.configService.get<string>('NODE_ENV') === 'production') {
@@ -60,3 +60,4 @@ export class PrismaPostgreService extends PrismaClient implements OnModuleInit, 
     );
   }
 }
+

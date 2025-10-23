@@ -8,7 +8,7 @@ const prismaMongo = new MongoClient();
 async function main() {
   console.log('🌱 Starting seed...');
 
-  // Limpiar datos existentes (opcional, comentar en producción)
+  // Clean existing data (optional, comment out in production)
   console.log('🧹 Cleaning existing data...');
   await cleanDatabase();
 
@@ -49,7 +49,7 @@ async function cleanDatabase() {
 async function seedPostgreSQL() {
   console.log('📊 Seeding PostgreSQL...');
 
-  // Crear Permisos
+  // Create Permissions
   const permissions = await Promise.all([
     prismaPostgres.permission.create({
       data: {
@@ -95,11 +95,11 @@ async function seedPostgreSQL() {
 
   console.log(`✅ Created ${permissions.length} permissions`);
 
-  // Crear Roles
+  // Create Roles
   const adminRole = await prismaPostgres.role.create({
     data: {
       name: 'admin',
-      description: 'Administrador del sistema',
+      description: 'System Administrator',
       isActive: true,
     },
   });
@@ -107,7 +107,7 @@ async function seedPostgreSQL() {
   const teacherRole = await prismaPostgres.role.create({
     data: {
       name: 'teacher',
-      description: 'Profesor',
+      description: 'Teacher',
       isActive: true,
     },
   });
@@ -115,16 +115,16 @@ async function seedPostgreSQL() {
   const studentRole = await prismaPostgres.role.create({
     data: {
       name: 'student',
-      description: 'Estudiante',
+      description: 'Student',
       isActive: true,
     },
   });
 
   console.log('✅ Created 3 roles');
 
-  // Asignar permisos a roles
+  // Assign permissions to roles
   await Promise.all([
-    // Admin tiene todos los permisos
+    // Admin has all permissions
     ...permissions.map((permission) =>
       prismaPostgres.rolePermission.create({
         data: {
@@ -133,7 +133,7 @@ async function seedPostgreSQL() {
         },
       }),
     ),
-    // Teacher puede gestionar cursos y leer usuarios
+    // Teacher can manage courses and read users
     prismaPostgres.rolePermission.create({
       data: {
         roleId: teacherRole.id,
@@ -150,7 +150,7 @@ async function seedPostgreSQL() {
 
   console.log('✅ Assigned permissions to roles');
 
-  // Crear Usuarios
+  // Create Users
   const hashedPassword = await bcrypt.hash('password123', 10);
 
   const adminUser = await prismaPostgres.user.create({
@@ -191,7 +191,7 @@ async function seedPostgreSQL() {
 
   console.log('✅ Created 3 users');
 
-  // Asignar roles a usuarios
+  // Assign roles to users
   await Promise.all([
     prismaPostgres.userRole.create({
       data: { userId: adminUser.id, roleId: adminRole.id },
@@ -206,7 +206,7 @@ async function seedPostgreSQL() {
 
   console.log('✅ Assigned roles to users');
 
-  // Crear Cursos
+  // Create Courses
   const beginnerCourse = await prismaPostgres.course.create({
     data: {
       title: 'English for Beginners',
@@ -233,7 +233,7 @@ async function seedPostgreSQL() {
 
   console.log('✅ Created 2 courses');
 
-  // Crear Lecciones
+  // Create Lessons
   await Promise.all([
     prismaPostgres.lesson.create({
       data: {
@@ -272,7 +272,7 @@ async function seedPostgreSQL() {
 
   console.log('✅ Created 3 lessons');
 
-  // Crear Matrículas
+  // Create Enrollments
   await prismaPostgres.enrollment.create({
     data: {
       userId: studentUser.id,
@@ -290,11 +290,11 @@ async function seedPostgreSQL() {
 async function seedMongoDB() {
   console.log('📦 Seeding MongoDB...');
 
-  // Obtener IDs de usuarios de PostgreSQL
+  // Get user IDs from PostgreSQL
   const users = await prismaPostgres.user.findMany();
   const lessons = await prismaPostgres.lesson.findMany();
 
-  // Crear Perfiles de Usuario
+  // Create User Profiles
   await Promise.all(
     users.map((user) =>
       prismaMongo.userProfile.create({
@@ -319,7 +319,7 @@ async function seedMongoDB() {
 
   console.log(`✅ Created ${users.length} user profiles`);
 
-  // Crear Configuraciones de Usuario
+  // Create User Settings
   await Promise.all(
     users.map((user) =>
       prismaMongo.userSetting.create({
@@ -339,7 +339,7 @@ async function seedMongoDB() {
 
   console.log(`✅ Created ${users.length} user settings`);
 
-  // Crear Contenido de Lecciones
+  // Create Lesson Content
   if (lessons.length > 0) {
     await Promise.all(
       lessons.map((lesson) =>
@@ -385,7 +385,7 @@ async function seedMongoDB() {
     console.log(`✅ Created ${lessons.length} lesson contents`);
   }
 
-  // Crear Actividades de Usuario
+  // Create User Activities
   await Promise.all([
     prismaMongo.userActivity.create({
       data: {
@@ -409,7 +409,7 @@ async function seedMongoDB() {
 
   console.log('✅ Created user activities');
 
-  // Crear Notificaciones
+  // Create Notifications
   await prismaMongo.notification.create({
     data: {
       userId: users[0].id,
@@ -422,7 +422,7 @@ async function seedMongoDB() {
 
   console.log('✅ Created notifications');
 
-  // Crear Logs de Auditoría
+  // Create Audit Logs
   await prismaMongo.auditLog.create({
     data: {
       userId: users[0].id,

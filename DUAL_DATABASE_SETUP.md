@@ -23,7 +23,7 @@
 
 ### 2. **Servicios de Prisma**
 
-#### `PrismaPostgreService` (PostgreSQL)
+#### `PrismaPostgresService` (PostgreSQL)
 - ✅ Conexión a PostgreSQL
 - ✅ Logging configurado
 - ✅ Lifecycle hooks (onModuleInit, onModuleDestroy)
@@ -156,13 +156,13 @@ make seed-dev
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { PrismaPostgreService } from './database/prisma-postgre.service';
+import { PrismaPostgresService } from './database/prisma-postgres.service';
 import { PrismaMongoService } from './database/prisma-mongo.service';
 
 @Injectable()
 export class MyService {
   constructor(
-    private prisma: PrismaPostgreService,
+    private prisma: PrismaPostgresService,
     private prismaMongoService: PrismaMongoService,
   ) {}
 

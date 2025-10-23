@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { META_ROLES } from '../decorators/role.decorator';
 import { Prisma } from '@prisma/postgres-client';
-import { PrismaPostgreService } from 'src/database/prisma-postgre.service';
+import { PrismaPostgresService } from 'src/database/prisma-postgres.service';
 
 export type User = Prisma.UserGetPayload<{
   include: {
@@ -24,7 +24,7 @@ export type User = Prisma.UserGetPayload<{
 export class UserRoleGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private readonly prisma: PrismaPostgreService,
+    private readonly prisma: PrismaPostgresService,
   ) {}
 
   private async getUserRoles(userId: string): Promise<string[]> {

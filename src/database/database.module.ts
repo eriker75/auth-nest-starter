@@ -1,18 +1,18 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { PrismaPostgreService } from './prisma-postgre.service';
+import { PrismaPostgresService } from './prisma-postgres.service';
 import { PrismaMongoService } from './prisma-mongo.service';
 
 /**
- * Módulo global de base de datos
- * Proporciona acceso a ambas bases de datos:
- * - PrismaPostgreService: PostgreSQL (datos estructurados)
- * - PrismaMongoService: MongoDB (datos flexibles)
+ * Global Database Module
+ * Provides access to both databases:
+ * - PrismaPostgresService: PostgreSQL (structured data)
+ * - PrismaMongoService: MongoDB (flexible data)
  */
 @Global()
 @Module({
   imports: [ConfigModule],
-  providers: [PrismaPostgreService, PrismaMongoService],
-  exports: [PrismaPostgreService, PrismaMongoService],
+  providers: [PrismaPostgresService, PrismaMongoService],
+  exports: [PrismaPostgresService, PrismaMongoService],
 })
 export class DatabaseModule {}

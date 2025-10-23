@@ -15,14 +15,14 @@ Para mantener una nomenclatura consistente y descriptiva, se han renombrado los 
 
 | Antes | Después | Estado |
 |-------|---------|--------|
-| `src/database/prisma.service.ts` | `src/database/prisma-postgre.service.ts` | ✅ Renombrado |
+| `src/database/prisma.service.ts` | `src/database/prisma-postgres.service.ts` | ✅ Renombrado |
 | `src/database/prisma-mongo.service.ts` | `src/database/prisma-mongo.service.ts` | ✅ Sin cambios |
 
 ### 📄 Clases/Servicios Exportados
 
 | Antes | Después |
 |-------|---------|
-| `PrismaService` | `PrismaPostgreService` |
+| `PrismaService` | `PrismaPostgresService` |
 | `PrismaMongoService` | `PrismaMongoService` (sin cambios) |
 
 ---
@@ -32,7 +32,7 @@ Para mantener una nomenclatura consistente y descriptiva, se han renombrado los 
 Los siguientes archivos han sido actualizados con las nuevas referencias:
 
 ### ✅ Código Fuente
-- [x] `src/database/prisma-postgre.service.ts` - Clase renombrada
+- [x] `src/database/prisma-postgres.service.ts` - Clase renombrada
 - [x] `src/database/database.module.ts` - Imports y exports actualizados
 - [x] `src/database/examples/user-complete.service.example.ts` - Ejemplos actualizados
 
@@ -62,20 +62,20 @@ prisma/
 
 ```
 src/database/
-├── prisma-postgre.service.ts  ← PostgreSQL Service
+├── prisma-postgres.service.ts  ← PostgreSQL Service
 └── prisma-mongo.service.ts    ← MongoDB Service
 ```
 
 ### Uso en Código
 
 ```typescript
-import { PrismaPostgreService } from './database/prisma-postgre.service';
+import { PrismaPostgresService } from './database/prisma-postgres.service';
 import { PrismaMongoService } from './database/prisma-mongo.service';
 
 @Injectable()
 export class MyService {
   constructor(
-    private prisma: PrismaPostgreService,      // PostgreSQL
+    private prisma: PrismaPostgresService,      // PostgreSQL
     private prismaMongoService: PrismaMongoService,  // MongoDB
   ) {}
 }
@@ -110,7 +110,7 @@ export class MyService {
 
 La nomenclatura de archivos ahora es consistente y descriptiva:
 
-- ✅ `schema.postgre.prisma` + `prisma-postgre.service.ts` → **PrismaPostgreService**
+- ✅ `schema.postgre.prisma` + `prisma-postgres.service.ts` → **PrismaPostgresService**
 - ✅ `schema.mongo.prisma` + `prisma-mongo.service.ts` → **PrismaMongoService**
 
 No se requieren cambios adicionales. El proyecto está listo para usar! 🎉

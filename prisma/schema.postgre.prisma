@@ -1,4 +1,4 @@
-// PostgreSQL Schema - Para datos estructurados
+// PostgreSQL Schema - For structured data
 generator client {
   provider = "prisma-client-js"
   output   = "../node_modules/@prisma/postgres-client"
@@ -10,7 +10,7 @@ datasource db {
 }
 
 // ========================================
-// MODELOS ESTRUCTURADOS (PostgreSQL)
+// STRUCTURED MODELS (PostgreSQL)
 // ========================================
 
 model User {
@@ -133,7 +133,7 @@ model Lesson {
   slug        String
   description String?
   order       Int
-  duration    Int?     // en minutos
+  duration    Int?     // in minutes
   isPublished Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

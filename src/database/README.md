@@ -3,7 +3,7 @@
 Este proyecto utiliza **dos bases de datos** con Prisma:
 
 ## 🗄️ PostgreSQL (Datos Estructurados)
-- **Servicio**: `PrismaPostgreService`
+- **Servicio**: `PrismaPostgresService`
 - **Schema**: `prisma/schema.postgre.prisma`
 - **Cliente**: `@prisma/postgres-client`
 - **Uso**: Datos relacionales y estructurados
@@ -45,11 +45,11 @@ Este proyecto utiliza **dos bases de datos** con Prisma:
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { PrismaPostgreService } from './database/prisma-postgre.service';
+import { PrismaPostgresService } from './database/prisma-postgres.service';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaPostgreService) {}
+  constructor(private prisma: PrismaPostgresService) {}
 
   async findAll() {
     return this.prisma.user.findMany({
@@ -126,13 +126,13 @@ export class UserProfileService {
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { PrismaPostgreService } from './database/prisma-postgre.service';
+import { PrismaPostgresService } from './database/prisma-postgres.service';
 import { PrismaMongoService } from './database/prisma-mongo.service';
 
 @Injectable()
 export class UserCompleteService {
   constructor(
-    private prisma: PrismaPostgreService,
+    private prisma: PrismaPostgresService,
     private prismaMongoService: PrismaMongoService,
   ) {}
 

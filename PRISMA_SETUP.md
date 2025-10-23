@@ -9,7 +9,7 @@ Este proyecto utiliza **Prisma con dos bases de datos diferentes** para optimiza
 ### PostgreSQL (Datos Estructurados)
 **Archivo**: `prisma/schema.postgre.prisma`  
 **Cliente**: `@prisma/postgres-client`  
-**Servicio**: `PrismaPostgreService`
+**Servicio**: `PrismaPostgresService`
 
 **Uso ideal para**:
 - ✅ Datos con relaciones estrictas
@@ -155,13 +155,13 @@ npm run prisma:seed
 
 ```typescript
 import { Injectable } from '@nestjs/common';
-import { PrismaPostgreService } from './database/prisma-postgre.service';
+import { PrismaPostgresService } from './database/prisma-postgres.service';
 import { PrismaMongoService } from './database/prisma-mongo.service';
 
 @Injectable()
 export class MyService {
   constructor(
-    private readonly prisma: PrismaPostgreService,           // PostgreSQL
+    private readonly prisma: PrismaPostgresService,           // PostgreSQL
     private readonly prismaMongoService: PrismaMongoService,  // MongoDB
   ) {}
 }

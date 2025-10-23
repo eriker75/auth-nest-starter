@@ -3,8 +3,8 @@ import { PrismaClient } from '@prisma/mongo-client';
 import { ConfigService } from '@nestjs/config';
 
 /**
- * Servicio de Prisma para MongoDB
- * Gestiona la conexión a la base de datos MongoDB para datos flexibles y no estructurados
+ * Prisma Service for MongoDB
+ * Manages MongoDB database connection for flexible and unstructured data
  */
 @Injectable()
 export class PrismaMongoService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
@@ -39,7 +39,7 @@ export class PrismaMongoService extends PrismaClient implements OnModuleInit, On
   }
 
   /**
-   * Limpia todas las colecciones (útil para testing)
+   * Clean all collections (useful for testing)
    */
   async cleanDatabase() {
     if (this.configService.get<string>('NODE_ENV') === 'production') {
