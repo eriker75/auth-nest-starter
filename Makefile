@@ -1,257 +1,257 @@
-# Nombre de los archivos docker-compose
+# Docker compose file names
 COMPOSE_DEV_FILE=docker-compose.dev.yml
 COMPOSE_PROD_FILE=docker-compose.prod.yml
 COMPOSE_SERVICES_FILE=docker-compose.services.yml
 
-# Nombre del proyecto para docker-compose
+# Project name for docker-compose
 PROJECT_NAME=onenglish
 
-# Comandos de desarrollo
+# Development commands
 up-dev:
-	@echo "Levantando los contenedores en modo desarrollo..."
+	@echo "Starting containers in development mode..."
 	docker-compose -f $(COMPOSE_DEV_FILE) -p $(PROJECT_NAME)_dev up --build
 
 down-dev:
-	@echo "Bajando los contenedores en modo desarrollo..."
+	@echo "Stopping containers in development mode..."
 	docker-compose -f $(COMPOSE_DEV_FILE) -p $(PROJECT_NAME)_dev down
 
 logs-dev:
-	@echo "Mostrando logs de los contenedores en modo desarrollo..."
+	@echo "Showing logs of containers in development mode..."
 	docker-compose -f $(COMPOSE_DEV_FILE) -p $(PROJECT_NAME)_dev logs -f
 
 restart-dev:
-	@echo "Reiniciando los contenedores en modo desarrollo..."
+	@echo "Restarting containers in development mode..."
 	docker-compose -f $(COMPOSE_DEV_FILE) -p $(PROJECT_NAME)_dev restart
 
 build-dev:
-	@echo "Construyendo las imágenes en modo desarrollo..."
+	@echo "Building images in development mode..."
 	docker-compose -f $(COMPOSE_DEV_FILE) -p $(PROJECT_NAME)_dev build
 
 clean-dev:
-	@echo "Limpiando los contenedores en modo desarrollo..."
+	@echo "Cleaning containers in development mode..."
 	docker-compose -f $(COMPOSE_DEV_FILE) -p $(PROJECT_NAME)_dev down --volumes
 
 destroy-dev:
-	@echo "Destruyendo los contenedores en modo desarrollo..."
+	@echo "Destroying containers in development mode..."
 	docker-compose -f $(COMPOSE_DEV_FILE) -p $(PROJECT_NAME)_dev down --volumes --rmi all
 
-# Comandos para servicios (solo infraestructura - para desarrollo local)
+# Commands for services (infrastructure only - for local development)
 up-services:
-	@echo "Levantando servicios (PostgreSQL, MongoDB, Redis, PgAdmin, Mongo Express)..."
+	@echo "Starting services (PostgreSQL, MongoDB, Redis, PgAdmin, Mongo Express)..."
 	docker-compose -f $(COMPOSE_SERVICES_FILE) -p $(PROJECT_NAME)_services up
 
 down-services:
-	@echo "Bajando servicios..."
+	@echo "Stopping services..."
 	docker-compose -f $(COMPOSE_SERVICES_FILE) -p $(PROJECT_NAME)_services down
 
 logs-services:
-	@echo "Mostrando logs de los servicios..."
+	@echo "Showing logs of services..."
 	docker-compose -f $(COMPOSE_SERVICES_FILE) -p $(PROJECT_NAME)_services logs -f
 
 restart-services:
-	@echo "Reiniciando servicios..."
+	@echo "Restarting services..."
 	docker-compose -f $(COMPOSE_SERVICES_FILE) -p $(PROJECT_NAME)_services restart
 
 ps-services:
-	@echo "Mostrando estado de los servicios..."
+	@echo "Showing status of services..."
 	docker-compose -f $(COMPOSE_SERVICES_FILE) -p $(PROJECT_NAME)_services ps
 
 clean-services:
-	@echo "Limpiando servicios y volúmenes..."
+	@echo "Cleaning services and volumes..."
 	docker-compose -f $(COMPOSE_SERVICES_FILE) -p $(PROJECT_NAME)_services down --volumes
 
-# Comandos de producción
+# Production commands
 up-prod:
-	@echo "Levantando los contenedores en modo producción..."
+	@echo "Starting containers in production mode..."
 	docker-compose -f $(COMPOSE_PROD_FILE) -p $(PROJECT_NAME)_prod up -d --build
 
 down-prod:
-	@echo "Bajando los contenedores en modo producción..."
+	@echo "Stopping containers in production mode..."
 	docker-compose -f $(COMPOSE_PROD_FILE) -p $(PROJECT_NAME)_prod down
 
 logs-prod:
-	@echo "Mostrando logs de los contenedores en modo producción..."
+	@echo "Showing logs of containers in production mode..."
 	docker-compose -f $(COMPOSE_PROD_FILE) -p $(PROJECT_NAME)_prod logs -f
 
 restart-prod:
-	@echo "Reiniciando los contenedores en modo producción..."
+	@echo "Restarting containers in production mode..."
 	docker-compose -f $(COMPOSE_PROD_FILE) -p $(PROJECT_NAME)_prod restart
 
 build-prod:
-	@echo "Construyendo las imágenes en modo producción..."
+	@echo "Building images in production mode..."
 	docker-compose -f $(COMPOSE_PROD_FILE) -p $(PROJECT_NAME)_prod build
 
 clean-prod:
-	@echo "Limpiando los contenedores en modo producción..."
+	@echo "Cleaning containers in production mode..."
 	docker-compose -f $(COMPOSE_PROD_FILE) -p $(PROJECT_NAME)_prod down --volumes
 
 destroy-prod:
-	@echo "Destruyendo los contenedores en modo producción..."
+	@echo "Destroying containers in production mode..."
 	docker-compose -f $(COMPOSE_PROD_FILE) -p $(PROJECT_NAME)_prod down --volumes --rmi all
 
-# Comandos de base de datos (Desarrollo)
+# Database commands (Development)
 migrate-dev:
-	@echo "Ejecutando migraciones de Prisma en desarrollo..."
+	@echo "Running Prisma migrations in development..."
 	docker exec -it nestjs_backend npx prisma migrate dev
 
 migrate-deploy-dev:
-	@echo "Ejecutando migraciones de Prisma (deploy) en desarrollo..."
+	@echo "Running Prisma migrations (deploy) in development..."
 	docker exec -it nestjs_backend npx prisma migrate deploy
 
 generate-dev:
-	@echo "Generando cliente de Prisma en desarrollo..."
+	@echo "Generating Prisma client in development..."
 	docker exec -it nestjs_backend npx prisma generate
 
 studio-dev:
-	@echo "Abriendo Prisma Studio en desarrollo..."
+	@echo "Opening Prisma Studio in development..."
 	docker exec -it nestjs_backend npx prisma studio
 
 seed-dev:
-	@echo "Ejecutando seed en desarrollo..."
+	@echo "Running seed in development..."
 	docker exec -it nestjs_backend npm run seed
 
-# Comandos de base de datos (Producción)
+# Database commands (Production)
 migrate-prod:
-	@echo "Ejecutando migraciones de Prisma en producción..."
+	@echo "Running Prisma migrations in production..."
 	docker exec -it nestjs_backend npx prisma migrate deploy
 
 generate-prod:
-	@echo "Generando cliente de Prisma en producción..."
+	@echo "Generating Prisma client in production..."
 	docker exec -it nestjs_backend npx prisma generate
 
 seed-prod:
-	@echo "Ejecutando seed en producción..."
+	@echo "Running seed in production..."
 	docker exec -it nestjs_backend npm run seed
 
-# Comandos de shell
+# Shell commands
 shell-backend-dev:
-	@echo "Accediendo al shell del backend en desarrollo..."
+	@echo "Accessing backend shell in development..."
 	docker exec -it nestjs_backend sh
 
 shell-postgres-dev:
-	@echo "Accediendo al shell de PostgreSQL en desarrollo..."
+	@echo "Accessing PostgreSQL shell in development..."
 	docker exec -it postgres psql -U $(POSTGRES_USER) -d $(POSTGRES_DB)
 
 shell-mongo-dev:
-	@echo "Accediendo al shell de MongoDB en desarrollo..."
+	@echo "Accessing MongoDB shell in development..."
 	docker exec -it mongo mongosh -u $(MONGO_USERNAME) -p $(MONGO_PASSWORD)
 
 shell-redis-dev:
-	@echo "Accediendo al shell de Redis en desarrollo..."
+	@echo "Accessing Redis shell in development..."
 	docker exec -it redis redis-cli
 
-# Comandos de logs específicos (Desarrollo)
+# Specific logs commands (Development)
 logs-backend-dev:
-	@echo "Mostrando logs del backend en desarrollo..."
+	@echo "Showing backend logs in development..."
 	docker-compose -f $(COMPOSE_DEV_FILE) -p $(PROJECT_NAME)_dev logs -f backend
 
 logs-postgres-dev:
-	@echo "Mostrando logs de PostgreSQL en desarrollo..."
+	@echo "Showing PostgreSQL logs in development..."
 	docker-compose -f $(COMPOSE_DEV_FILE) -p $(PROJECT_NAME)_dev logs -f postgres
 
 logs-mongo-dev:
-	@echo "Mostrando logs de MongoDB en desarrollo..."
+	@echo "Showing MongoDB logs in development..."
 	docker-compose -f $(COMPOSE_DEV_FILE) -p $(PROJECT_NAME)_dev logs -f mongo
 
 logs-redis-dev:
-	@echo "Mostrando logs de Redis en desarrollo..."
+	@echo "Showing Redis logs in development..."
 	docker-compose -f $(COMPOSE_DEV_FILE) -p $(PROJECT_NAME)_dev logs -f redis
 
-# Comandos de logs específicos (Producción)
+# Specific logs commands (Production)
 logs-backend-prod:
-	@echo "Mostrando logs del backend en producción..."
+	@echo "Showing backend logs in production..."
 	docker-compose -f $(COMPOSE_PROD_FILE) -p $(PROJECT_NAME)_prod logs -f backend
 
 logs-postgres-prod:
-	@echo "Mostrando logs de PostgreSQL en producción..."
+	@echo "Showing PostgreSQL logs in production..."
 	docker-compose -f $(COMPOSE_PROD_FILE) -p $(PROJECT_NAME)_prod logs -f postgres
 
 logs-mongo-prod:
-	@echo "Mostrando logs de MongoDB en producción..."
+	@echo "Showing MongoDB logs in production..."
 	docker-compose -f $(COMPOSE_PROD_FILE) -p $(PROJECT_NAME)_prod logs -f mongo
 
-# Comandos útiles
+# Useful commands
 ps-dev:
-	@echo "Mostrando estado de los contenedores en desarrollo..."
+	@echo "Showing status of containers in development..."
 	docker-compose -f $(COMPOSE_DEV_FILE) -p $(PROJECT_NAME)_dev ps
 
 ps-prod:
-	@echo "Mostrando estado de los contenedores en producción..."
+	@echo "Showing status of containers in production..."
 	docker-compose -f $(COMPOSE_PROD_FILE) -p $(PROJECT_NAME)_prod ps
 
 stats:
-	@echo "Mostrando estadísticas de uso de recursos..."
+	@echo "Showing resource usage statistics..."
 	docker stats
 
 prune:
-	@echo "Limpiando recursos Docker no utilizados..."
+	@echo "Cleaning unused Docker resources..."
 	docker system prune -a --volumes
 
-# Comando por defecto
+# Default command
 .PHONY: help
 help:
 	@echo "╔══════════════════════════════════════════════════════════════╗"
 	@echo "║          OneEnglish Backend - Makefile Commands             ║"
 	@echo "╚══════════════════════════════════════════════════════════════╝"
 	@echo ""
-	@echo "🔧 Servicios (Desarrollo Local):"
-	@echo "  make up-services         - Levantar solo servicios (DBs + Admin)"
-	@echo "  make down-services       - Bajar servicios"
-	@echo "  make logs-services       - Ver logs de servicios"
-	@echo "  make restart-services    - Reiniciar servicios"
-	@echo "  make ps-services         - Ver estado de servicios"
-	@echo "  make clean-services      - Limpiar servicios y volúmenes"
+	@echo "🔧 Services (Local Development):"
+	@echo "  make up-services         - Start only services (DBs + Admin)"
+	@echo "  make down-services       - Stop services"
+	@echo "  make logs-services       - View service logs"
+	@echo "  make restart-services    - Restart services"
+	@echo "  make ps-services         - View service status"
+	@echo "  make clean-services      - Clean services and volumes"
 	@echo ""
-	@echo "📦 Comandos de Desarrollo:"
-	@echo "  make up-dev              - Levantar contenedores en desarrollo"
-	@echo "  make down-dev            - Bajar contenedores en desarrollo"
-	@echo "  make logs-dev            - Mostrar todos los logs en desarrollo"
-	@echo "  make restart-dev         - Reiniciar contenedores en desarrollo"
-	@echo "  make build-dev           - Construir imágenes en desarrollo"
-	@echo "  make clean-dev           - Limpiar contenedores y volúmenes en desarrollo"
-	@echo "  make destroy-dev         - Destruir todo en desarrollo"
-	@echo "  make ps-dev              - Ver estado de contenedores en desarrollo"
+	@echo "📦 Development Commands:"
+	@echo "  make up-dev              - Start containers in development"
+	@echo "  make down-dev            - Stop containers in development"
+	@echo "  make logs-dev            - Show all logs in development"
+	@echo "  make restart-dev         - Restart containers in development"
+	@echo "  make build-dev           - Build images in development"
+	@echo "  make clean-dev           - Clean containers and volumes in development"
+	@echo "  make destroy-dev         - Destroy everything in development"
+	@echo "  make ps-dev              - View container status in development"
 	@echo ""
-	@echo "🚀 Comandos de Producción:"
-	@echo "  make up-prod             - Levantar contenedores en producción"
-	@echo "  make down-prod           - Bajar contenedores en producción"
-	@echo "  make logs-prod           - Mostrar todos los logs en producción"
-	@echo "  make restart-prod        - Reiniciar contenedores en producción"
-	@echo "  make build-prod          - Construir imágenes en producción"
-	@echo "  make clean-prod          - Limpiar contenedores y volúmenes en producción"
-	@echo "  make destroy-prod        - Destruir todo en producción"
-	@echo "  make ps-prod             - Ver estado de contenedores en producción"
+	@echo "🚀 Production Commands:"
+	@echo "  make up-prod             - Start containers in production"
+	@echo "  make down-prod           - Stop containers in production"
+	@echo "  make logs-prod           - Show all logs in production"
+	@echo "  make restart-prod        - Restart containers in production"
+	@echo "  make build-prod          - Build images in production"
+	@echo "  make clean-prod          - Clean containers and volumes in production"
+	@echo "  make destroy-prod        - Destroy everything in production"
+	@echo "  make ps-prod             - View container status in production"
 	@echo ""
-	@echo "🗄️  Comandos de Base de Datos (Desarrollo):"
-	@echo "  make migrate-dev         - Ejecutar migraciones de Prisma"
-	@echo "  make migrate-deploy-dev  - Ejecutar migraciones (deploy)"
-	@echo "  make generate-dev        - Generar cliente de Prisma"
-	@echo "  make studio-dev          - Abrir Prisma Studio"
-	@echo "  make seed-dev            - Ejecutar seed de base de datos"
+	@echo "🗄️  Database Commands (Development):"
+	@echo "  make migrate-dev         - Run Prisma migrations"
+	@echo "  make migrate-deploy-dev  - Run migrations (deploy)"
+	@echo "  make generate-dev        - Generate Prisma client"
+	@echo "  make studio-dev          - Open Prisma Studio"
+	@echo "  make seed-dev            - Run database seed"
 	@echo ""
-	@echo "🗄️  Comandos de Base de Datos (Producción):"
-	@echo "  make migrate-prod        - Ejecutar migraciones en producción"
-	@echo "  make generate-prod       - Generar cliente de Prisma"
-	@echo "  make seed-prod           - Ejecutar seed en producción"
+	@echo "🗄️  Database Commands (Production):"
+	@echo "  make migrate-prod        - Run migrations in production"
+	@echo "  make generate-prod       - Generate Prisma client"
+	@echo "  make seed-prod           - Run seed in production"
 	@echo ""
-	@echo "🐚 Comandos de Shell (Desarrollo):"
-	@echo "  make shell-backend-dev   - Acceder al shell del backend"
-	@echo "  make shell-postgres-dev  - Acceder al shell de PostgreSQL"
-	@echo "  make shell-mongo-dev     - Acceder al shell de MongoDB"
-	@echo "  make shell-redis-dev     - Acceder al shell de Redis"
+	@echo "🐚 Shell Commands (Development):"
+	@echo "  make shell-backend-dev   - Access backend shell"
+	@echo "  make shell-postgres-dev  - Access PostgreSQL shell"
+	@echo "  make shell-mongo-dev     - Access MongoDB shell"
+	@echo "  make shell-redis-dev     - Access Redis shell"
 	@echo ""
-	@echo "📝 Logs Específicos (Desarrollo):"
-	@echo "  make logs-backend-dev    - Logs del backend"
-	@echo "  make logs-postgres-dev   - Logs de PostgreSQL"
-	@echo "  make logs-mongo-dev      - Logs de MongoDB"
-	@echo "  make logs-redis-dev      - Logs de Redis"
+	@echo "📝 Specific Logs (Development):"
+	@echo "  make logs-backend-dev    - Backend logs"
+	@echo "  make logs-postgres-dev   - PostgreSQL logs"
+	@echo "  make logs-mongo-dev      - MongoDB logs"
+	@echo "  make logs-redis-dev      - Redis logs"
 	@echo ""
-	@echo "📝 Logs Específicos (Producción):"
-	@echo "  make logs-backend-prod   - Logs del backend"
-	@echo "  make logs-postgres-prod  - Logs de PostgreSQL"
-	@echo "  make logs-mongo-prod     - Logs de MongoDB"
+	@echo "📝 Specific Logs (Production):"
+	@echo "  make logs-backend-prod   - Backend logs"
+	@echo "  make logs-postgres-prod  - PostgreSQL logs"
+	@echo "  make logs-mongo-prod     - MongoDB logs"
 	@echo ""
-	@echo "🛠️  Utilidades:"
-	@echo "  make stats               - Ver estadísticas de recursos Docker"
-	@echo "  make prune               - Limpiar recursos Docker no utilizados"
+	@echo "🛠️  Utilities:"
+	@echo "  make stats               - View Docker resource usage statistics"
+	@echo "  make prune               - Clean unused Docker resources"
 	@echo ""
