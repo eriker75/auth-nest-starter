@@ -3,12 +3,12 @@ import {
   UnauthorizedException,
   BadRequestException,
 } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
+import { PrismaPostgreService } from '../../database/prisma-postgre.service';
 import { LoginUserDto } from '../dto/login-user.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaPostgreService) {}
 
   /**
    * Método para realizar el login de un usuario
@@ -69,7 +69,7 @@ export class AuthService {
     // const token = this.jwtService.sign({ id: user.id, email: user.email, role });
 
     // Remover password de la respuesta
-    const { password: _, visiblePassword: __, ...userWithoutPassword } = user;
+    const { password: _, ...userWithoutPassword } = user;
 
     return {
       success: true,

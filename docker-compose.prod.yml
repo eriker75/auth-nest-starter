@@ -68,10 +68,13 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: "${MONGO_PASSWORD}"
       ME_CONFIG_MONGODB_SERVER: "mongo"
       ME_CONFIG_MONGODB_PORT: "27017"
+      ME_CONFIG_MONGODB_AUTH_DATABASE: "admin"
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
       ME_CONFIG_BASICAUTH_USERNAME: "${MONGO_EXPRESS_USERNAME}"
       ME_CONFIG_BASICAUTH_PASSWORD: "${MONGO_EXPRESS_PASSWORD}"
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
     networks:
       - appnet
 

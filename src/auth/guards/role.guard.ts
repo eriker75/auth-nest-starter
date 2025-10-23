@@ -7,14 +7,16 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { META_ROLES } from '../decorators/role.decorator';
-import { Prisma } from '@prisma/client';
-import { PrismaService } from 'src/database/prisma.service';
+import { Prisma } from '@prisma/postgres-client';
+import { PrismaPostgreService } from 'src/database/prisma-postgre.service';
 
 export type User = Prisma.UserGetPayload<{
   include: {
-    roles: true;
-    professional?: true;
-    patient?: true;
+    roles: {
+      include: {
+        role: true;
+      };
+    };
   };
 }>;
 
@@ -22,20 +24,26 @@ export type User = Prisma.UserGetPayload<{
 export class UserRoleGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private readonly prisma: PrismaService,
+    private readonly prisma: PrismaPostgreService,
   ) {}
 
   private async getUserRoles(userId: string): Promise<string[]> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      include: { roles: true },
+      include: { 
+        roles: {
+          include: {
+            role: true
+          }
+        } 
+      },
     });
 
     if (!user) {
       throw new BadRequestException('User not found');
     }
 
-    return user.roles.map((role) => role.name);
+    return user.roles.map((userRole) => userRole.role.name);
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

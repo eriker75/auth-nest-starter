@@ -3,13 +3,11 @@ import {
   ExecutionContext,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/postgres-client';
 
 export type User = Prisma.UserGetPayload<{
   include: {
     roles: true;
-    professional?: true;
-    patient?: true;
   };
 }>;
 
