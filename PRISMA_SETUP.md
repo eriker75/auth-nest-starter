@@ -7,7 +7,7 @@ Este proyecto utiliza **Prisma con dos bases de datos diferentes** para optimiza
 ## 📊 Arquitectura de Bases de Datos
 
 ### PostgreSQL (Datos Estructurados)
-**Archivo**: `prisma/schema.postgre.prisma`  
+**Archivo**: `prisma/schema.prisma`  
 **Cliente**: `@prisma/postgres-client`  
 **Servicio**: `PrismaPostgresService`
 

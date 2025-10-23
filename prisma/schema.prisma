@@ -1,0 +1,299 @@
+// PostgreSQL Schema - For structured data
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/postgres-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ========================================
+// USER MANAGEMENT MODELS
+// ========================================
+
+model User {
+  id              String             @id @default(uuid())
+  email           String             @unique
+  username        String?            @unique
+  password        String?
+  firstName       String
+  lastName        String
+  phone           String?
+  avatar          String?
+  bio             String?
+  isOnline        Boolean            @default(false)
+  isActive        Boolean            @default(true)
+  isVerified      Boolean            @default(false)
+  lastLoginAt     DateTime?
+  emailVerifiedAt DateTime?
+  roles           UserRole[]
+  permissions     UserPermission[]
+  settings        UserSetting?
+  activities      UserActivity[]
+  progress        UserProgress[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@map("users")
+  @@index([email])
+  @@index([username])
+}
+
+model UserSetting {
+  id                    String   @id @default(uuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  theme                 String   @default("light") // light, dark, auto
+  language              String   @default("en") // en, es, fr, etc
+  emailNotifications    Boolean  @default(true)
+  pushNotifications     Boolean  @default(true)
+  soundEffects          Boolean  @default(true)
+  weeklyReport          Boolean  @default(true)
+  timezone              String   @default("UTC")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("user_settings")
+}
+
+model UserActivity {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action     String   // login, logout, start_challenge, complete_phase, etc
+  resource   String?  // challenge, phase, question
+  resourceId String?  // ID of the resource
+  ipAddress  String?
+  userAgent  String?
+  metadata   Json?    // Additional data about the activity
+  timestamp  DateTime @default(now())
+
+  @@map("user_activities")
+  @@index([userId])
+  @@index([action])
+  @@index([timestamp])
+}
+
+// ========================================
+// ROLE & PERMISSION MODELS
+// ========================================
+
+model Role {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  description String?
+  isActive    Boolean          @default(true)
+  users       UserRole[]
+  permissions RolePermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@map("roles")
+  @@index([name])
+}
+
+model Permission {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  resource    String
+  action      String
+  description String?
+  roles       RolePermission[]
+  users       UserPermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@map("permissions")
+  @@index([resource, action])
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String
+  roleId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, roleId])
+  @@map("user_roles")
+  @@index([userId])
+  @@index([roleId])
+}
+
+model RolePermission {
+  id           String     @id @default(uuid())
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@unique([roleId, permissionId])
+  @@map("role_permissions")
+  @@index([roleId])
+  @@index([permissionId])
+}
+
+model UserPermission {
+  id           String     @id @default(uuid())
+  userId       String
+  permissionId String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@unique([userId, permissionId])
+  @@map("user_permissions")
+  @@index([userId])
+  @@index([permissionId])
+}
+
+// ========================================
+// CHALLENGE SYSTEM MODELS (Olympic-style 5 phases)
+// ========================================
+
+model Challenge {
+  id          String         @id @default(uuid())
+  title       String
+  slug        String         @unique
+  description String?
+  category    String         // listening, speaking, grammar, vocabulary, mixed
+  level       String         // A1, A2, B1, B2, C1, C2
+  difficulty  String         // easy, medium, hard
+  totalPoints Int            @default(0)
+  isPublished Boolean        @default(false)
+  isActive    Boolean        @default(true)
+  phases      Phase[]
+  progress    UserProgress[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@map("challenges")
+  @@index([slug])
+  @@index([category])
+  @@index([level])
+  @@index([difficulty])
+  @@index([isPublished])
+}
+
+model Phase {
+  id              String         @id @default(uuid())
+  challengeId     String
+  challenge       Challenge      @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  phaseNumber     Int            // 1, 2, 3, 4, 5 (Olympic phases)
+  title           String
+  slug            String
+  description     String?
+  points          Int            @default(0)
+  timeLimit       Int?           // Time limit in seconds (optional)
+  questionCount   Int            @default(0) // Total questions in this phase
+  requiredScore   Int            @default(70) // Required score % to pass
+  isPublished     Boolean        @default(false)
+  phaseProgress   PhaseProgress[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@unique([challengeId, phaseNumber])
+  @@unique([challengeId, slug])
+  @@map("phases")
+  @@index([challengeId])
+  @@index([phaseNumber])
+}
+
+model UserProgress {
+  id                String          @id @default(uuid())
+  userId            String
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challengeId       String
+  challenge         Challenge       @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  currentPhase      Int             @default(1) // Current phase user is on (1-5)
+  totalScore        Int             @default(0)
+  totalTimeSpent    Int             @default(0) // Total time in seconds
+  isCompleted       Boolean         @default(false)
+  completedAt       DateTime?
+  startedAt         DateTime        @default(now())
+  lastActivityAt    DateTime        @default(now())
+  phaseProgress     PhaseProgress[]
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@unique([userId, challengeId])
+  @@map("user_progress")
+  @@index([userId])
+  @@index([challengeId])
+  @@index([isCompleted])
+}
+
+model PhaseProgress {
+  id              String        @id @default(uuid())
+  userProgressId  String
+  userProgress    UserProgress  @relation(fields: [userProgressId], references: [id], onDelete: Cascade)
+  phaseId         String
+  phase           Phase         @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  score           Int           @default(0)
+  maxScore        Int           @default(0)
+  correctAnswers  Int           @default(0)
+  wrongAnswers    Int           @default(0)
+  timeSpent       Int           @default(0) // Time in seconds
+  attempts        Int           @default(0)
+  isPassed        Boolean       @default(false)
+  isCompleted     Boolean       @default(false)
+  completedAt     DateTime?
+  startedAt       DateTime      @default(now())
+  lastAttemptAt   DateTime      @default(now())
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([userProgressId, phaseId])
+  @@map("phase_progress")
+  @@index([userProgressId])
+  @@index([phaseId])
+  @@index([isPassed])
+  @@index([isCompleted])
+}
+
+// ========================================
+// AUDIT & SYSTEM MODELS
+// ========================================
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?  // User who performed the action
+  action    String   // create, update, delete, login, etc
+  entity    String   // User, Challenge, Phase, etc
+  entityId  String?  // ID of affected entity
+  changes   Json?    // Changes made (before/after)
+  ipAddress String?
+  userAgent String?
+  metadata  Json?
+  timestamp DateTime @default(now())
+
+  @@map("audit_logs")
+  @@index([userId])
+  @@index([action])
+  @@index([entity])
+  @@index([timestamp])
+}
+
+model ErrorLog {
+  id         String    @id @default(uuid())
+  userId     String?
+  errorType  String
+  message    String
+  stack      String?
+  context    Json?    // Request, params, body, etc
+  severity   String   @default("error") // error, warning, critical
+  isResolved Boolean  @default(false)
+  resolvedAt DateTime?
+  timestamp  DateTime @default(now())
+
+  @@map("error_logs")
+  @@index([userId])
+  @@index([errorType])
+  @@index([severity])
+  @@index([timestamp])
+  @@index([isResolved])
+}

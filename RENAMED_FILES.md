@@ -8,7 +8,7 @@ Para mantener una nomenclatura consistente y descriptiva, se han renombrado los 
 
 | Antes | Después | Estado |
 |-------|---------|--------|
-| `prisma/schema.prisma` | `prisma/schema.postgre.prisma` | ✅ Renombrado |
+| `prisma/schema.prisma` | `prisma/schema.prisma` | ✅ Renombrado |
 | `prisma/schema.mongo.prisma` | `prisma/schema.mongo.prisma` | ✅ Sin cambios |
 
 ### 📄 Servicios de Base de Datos
@@ -54,7 +54,7 @@ Los siguientes archivos han sido actualizados con las nuevas referencias:
 
 ```
 prisma/
-├── schema.postgre.prisma  ← PostgreSQL
+├── schema.prisma  ← PostgreSQL
 └── schema.mongo.prisma    ← MongoDB
 ```
 
@@ -87,10 +87,10 @@ export class MyService {
 
 ```json
 {
-  "prisma:generate:postgres": "prisma generate --schema=./prisma/schema.postgre.prisma",
+  "prisma:generate:postgres": "prisma generate --schema=./prisma/schema.prisma",
   "prisma:generate:mongo": "prisma generate --schema=./prisma/schema.mongo.prisma",
-  "prisma:migrate:postgres": "prisma migrate dev --schema=./prisma/schema.postgre.prisma",
-  "prisma:studio:postgres": "prisma studio --schema=./prisma/schema.postgre.prisma",
+  "prisma:migrate:postgres": "prisma migrate dev --schema=./prisma/schema.prisma",
+  "prisma:studio:postgres": "prisma studio --schema=./prisma/schema.prisma",
   "prisma:studio:mongo": "prisma studio --schema=./prisma/schema.mongo.prisma --port 5556"
 }
 ```
@@ -110,7 +110,7 @@ export class MyService {
 
 La nomenclatura de archivos ahora es consistente y descriptiva:
 
-- ✅ `schema.postgre.prisma` + `prisma-postgres.service.ts` → **PrismaPostgresService**
+- ✅ `schema.prisma` + `prisma-postgres.service.ts` → **PrismaPostgresService**
 - ✅ `schema.mongo.prisma` + `prisma-mongo.service.ts` → **PrismaMongoService**
 
 No se requieren cambios adicionales. El proyecto está listo para usar! 🎉

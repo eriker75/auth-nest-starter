@@ -4,7 +4,7 @@ Este proyecto utiliza **dos bases de datos** con Prisma:
 
 ## 🗄️ PostgreSQL (Datos Estructurados)
 - **Servicio**: `PrismaPostgresService`
-- **Schema**: `prisma/schema.postgre.prisma`
+- **Schema**: `prisma/schema.prisma`
 - **Cliente**: `@prisma/postgres-client`
 - **Uso**: Datos relacionales y estructurados
 

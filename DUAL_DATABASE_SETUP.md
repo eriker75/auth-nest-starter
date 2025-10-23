@@ -4,7 +4,7 @@
 
 ### 1. **Schemas de Prisma Separados**
 
-#### PostgreSQL (`prisma/schema.postgre.prisma`)
+#### PostgreSQL (`prisma/schema.prisma`)
 - ✅ Generator: `@prisma/postgres-client`
 - ✅ Datasource: PostgreSQL
 - ✅ Modelos estructurados creados:
