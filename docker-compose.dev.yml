@@ -1,0 +1,151 @@
+version: "3.8"
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      TZ: "${TZ:-America/Caracas}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - "${POSTGRES_EXT_PORT:-5432}:5432"
+    networks:
+      - appnet
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:latest
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "${PGADMIN_DEFAULT_EMAIL}"
+      PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_DEFAULT_PASSWORD}"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmindata:/var/lib/pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    depends_on:
+      - postgres
+    networks:
+      - appnet
+
+  mongo:
+    container_name: mongo
+    image: mongo:7.0
+    restart: always
+    environment:
+      TZ: "${TZ:-America/Caracas}"
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_PASSWORD}"
+    volumes:
+      - mongodata:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - "${MONGO_EXT_PORT:-27017}:27017"
+    networks:
+      - appnet
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    restart: always
+    ports:
+      - "${MONGO_EXPRESS_PORT:-8081}:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: "${MONGO_USERNAME}"
+      ME_CONFIG_MONGODB_ADMINPASSWORD: "${MONGO_PASSWORD}"
+      ME_CONFIG_MONGODB_SERVER: "mongo"
+      ME_CONFIG_MONGODB_PORT: "27017"
+      ME_CONFIG_BASICAUTH_USERNAME: "${MONGO_EXPRESS_USERNAME}"
+      ME_CONFIG_BASICAUTH_PASSWORD: "${MONGO_EXPRESS_PASSWORD}"
+    depends_on:
+      - mongo
+    networks:
+      - appnet
+
+  redis:
+    container_name: redis
+    image: redis:7.4.0-alpine
+    restart: always
+    volumes:
+      - redisdata:/data
+    networks:
+      - appnet
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - "${REDIS_EXT_PORT:-6379}:6379"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: nestjs_backend
+    image: nestjs_backend
+    restart: always
+    ports:
+      - "${BACKEND_PORT:-3000}:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 60s
+      timeout: 15s
+      retries: 5
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    links:
+      - postgres
+      - mongo
+      - redis
+    env_file:
+      - .env
+    command: npm run start:dev
+    develop:
+      watch:
+        - path: ./src
+          target: /usr/src/app/src
+          action: sync
+        - path: ./package.json
+          target: /usr/src/app/package.json
+          action: rebuild
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge
+
+volumes:
+  postgresdata:
+    name: onenglish-postgresdata
+    external: false
+  pgadmindata:
+    name: onenglish-pgadmindata
+    external: false
+  mongodata:
+    name: onenglish-mongodata
+    external: false
+  redisdata:
+    name: onenglish-redisdata
+    external: false
