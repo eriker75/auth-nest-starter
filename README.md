@@ -496,10 +496,23 @@ make up-dev
 
 ---
 
-## 📚 Recursos
+## 📖 Documentación
+
+Para documentación detallada del proyecto, consulta la carpeta [`docs/`](./docs/):
+
+- **[DATABASE_ARCHITECTURE.md](./docs/DATABASE_ARCHITECTURE.md)** - Arquitectura completa de bases de datos
+- **[PRISMA_SETUP.md](./docs/PRISMA_SETUP.md)** - Configuración y uso de Prisma
+- **[DUAL_DATABASE_SETUP.md](./docs/DUAL_DATABASE_SETUP.md)** - Setup de PostgreSQL + MongoDB
+- **[LOCAL_DEVELOPMENT.md](./docs/LOCAL_DEVELOPMENT.md)** - Workflow de desarrollo local
+- **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - Diagramas de arquitectura del sistema
+- **[RENAMED_FILES.md](./docs/RENAMED_FILES.md)** - Historial de cambios de estructura
+- **[CREDENTIALS.md](./docs/CREDENTIALS.md)** - 🔒 Referencia de credenciales (git-ignored)
+
+## 📚 Recursos Externos
 
 - [NestJS Documentation](https://docs.nestjs.com)
 - [Prisma Documentation](https://www.prisma.io/docs)
+- [Mongoose Documentation](https://mongoosejs.com/docs/)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 - [MongoDB Documentation](https://docs.mongodb.com/)
 - [Redis Documentation](https://redis.io/documentation)
