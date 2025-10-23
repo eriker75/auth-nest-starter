@@ -18,20 +18,20 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   /**
-   * Endpoint para realizar login
+   * Endpoint to perform user login
    * POST /auth/login
    */
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Login de usuario' })
+  @ApiOperation({ summary: 'User login' })
   @ApiBody({ type: LoginUserDto })
   @ApiResponse({
     status: 200,
-    description: 'Login exitoso',
+    description: 'Successful login',
     schema: {
       example: {
         success: true,
-        message: 'Login exitoso',
+        message: 'Login successful',
         user: {
           id: 'uuid',
           email: 'user@example.com',
@@ -48,75 +48,75 @@ export class AuthController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Credenciales inválidas',
+    description: 'Invalid credentials',
   })
   @ApiResponse({
     status: 400,
-    description: 'Datos de entrada inválidos',
+    description: 'Invalid input data',
   })
   async login(@Body() loginDto: LoginUserDto) {
     return this.authService.login(loginDto);
   }
 
   /**
-   * Endpoint para realizar logout
+   * Endpoint to perform user logout
    * POST /auth/logout
-   * Requiere autenticación (JWT Guard - por implementar)
+   * Requires authentication (JWT Guard - to be implemented)
    */
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Logout de usuario' })
-  // @UseGuards(JwtAuthGuard) // Descomentar cuando se implemente JWT Guard
+  @ApiOperation({ summary: 'User logout' })
+  // @UseGuards(JwtAuthGuard) // Uncomment when JWT Guard is implemented
   @ApiResponse({
     status: 200,
-    description: 'Logout exitoso',
+    description: 'Successful logout',
   })
   async logout(@Request() req) {
-    // TODO: Obtener userId del token JWT decodificado
+    // TODO: Get userId from decoded JWT token
     const userId = req.user?.id || 'user-id-placeholder';
     return this.authService.logout(userId);
   }
 
   /**
-   * Endpoint para validar token
+   * Endpoint to validate token
    * GET /auth/validate
-   * Requiere autenticación (JWT Guard - por implementar)
+   * Requires authentication (JWT Guard - to be implemented)
    */
   @Get('validate')
-  @ApiOperation({ summary: 'Validar token JWT' })
-  // @UseGuards(JwtAuthGuard) // Descomentar cuando se implemente JWT Guard
+  @ApiOperation({ summary: 'Validate JWT token' })
+  // @UseGuards(JwtAuthGuard) // Uncomment when JWT Guard is implemented
   @ApiResponse({
     status: 200,
-    description: 'Token válido',
+    description: 'Valid token',
   })
   @ApiResponse({
     status: 401,
-    description: 'Token inválido o expirado',
+    description: 'Invalid or expired token',
   })
   async validateToken(@Request() req) {
     return {
       success: true,
-      message: 'Token válido',
+      message: 'Valid token',
       user: req.user,
     };
   }
 
   /**
-   * Endpoint para refrescar token
+   * Endpoint to refresh token
    * POST /auth/refresh
-   * Requiere autenticación (JWT Guard - por implementar)
+   * Requires authentication (JWT Guard - to be implemented)
    */
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Refrescar token JWT' })
-  // @UseGuards(JwtAuthGuard) // Descomentar cuando se implemente JWT Guard
+  @ApiOperation({ summary: 'Refresh JWT token' })
+  // @UseGuards(JwtAuthGuard) // Uncomment when JWT Guard is implemented
   @ApiResponse({
     status: 200,
-    description: 'Token refrescado exitosamente',
+    description: 'Token refreshed successfully',
   })
   @ApiResponse({
     status: 401,
-    description: 'Token inválido',
+    description: 'Invalid token',
   })
   async refreshToken(@Request() req) {
     const userId = req.user?.id || 'user-id-placeholder';
@@ -124,20 +124,20 @@ export class AuthController {
   }
 
   /**
-   * Endpoint para obtener el perfil del usuario autenticado
+   * Endpoint to get authenticated user profile
    * GET /auth/profile
-   * Requiere autenticación (JWT Guard - por implementar)
+   * Requires authentication (JWT Guard - to be implemented)
    */
   @Get('profile')
-  @ApiOperation({ summary: 'Obtener perfil del usuario autenticado' })
-  // @UseGuards(JwtAuthGuard) // Descomentar cuando se implemente JWT Guard
+  @ApiOperation({ summary: 'Get authenticated user profile' })
+  // @UseGuards(JwtAuthGuard) // Uncomment when JWT Guard is implemented
   @ApiResponse({
     status: 200,
-    description: 'Perfil del usuario',
+    description: 'User profile',
   })
   @ApiResponse({
     status: 401,
-    description: 'No autenticado',
+    description: 'Not authenticated',
   })
   async getProfile(@Request() req) {
     return {
