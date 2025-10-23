@@ -1,0 +1,162 @@
+// PostgreSQL Schema - Para datos estructurados
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/postgres-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ========================================
+// MODELOS ESTRUCTURADOS (PostgreSQL)
+// ========================================
+
+model User {
+  id              String        @id @default(uuid())
+  email           String        @unique
+  username        String?       @unique
+  password        String?
+  firstName       String
+  lastName        String
+  phone           String?
+  avatar          String?
+  isOnline        Boolean       @default(false)
+  isActive        Boolean       @default(true)
+  isVerified      Boolean       @default(false)
+  lastLoginAt     DateTime?
+  emailVerifiedAt DateTime?
+  roles           UserRole[]
+  permissions     UserPermission[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("users")
+  @@index([email])
+  @@index([username])
+}
+
+model Role {
+  id          String       @id @default(uuid())
+  name        String       @unique
+  description String?
+  isActive    Boolean      @default(true)
+  users       UserRole[]
+  permissions RolePermission[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("roles")
+  @@index([name])
+}
+
+model Permission {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  resource    String
+  action      String
+  description String?
+  roles       RolePermission[]
+  users       UserPermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@map("permissions")
+  @@index([resource, action])
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String
+  roleId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, roleId])
+  @@map("user_roles")
+  @@index([userId])
+  @@index([roleId])
+}
+
+model RolePermission {
+  id           String     @id @default(uuid())
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@unique([roleId, permissionId])
+  @@map("role_permissions")
+  @@index([roleId])
+  @@index([permissionId])
+}
+
+model UserPermission {
+  id           String     @id @default(uuid())
+  userId       String
+  permissionId String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@unique([userId, permissionId])
+  @@map("user_permissions")
+  @@index([userId])
+  @@index([permissionId])
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  description String?
+  level       String   // beginner, intermediate, advanced
+  price       Decimal  @db.Decimal(10, 2)
+  isPublished Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("courses")
+  @@index([slug])
+  @@index([level])
+  @@index([isPublished])
+}
+
+model Lesson {
+  id          String   @id @default(uuid())
+  courseId    String
+  title       String
+  slug        String
+  description String?
+  order       Int
+  duration    Int?     // en minutos
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([courseId, slug])
+  @@map("lessons")
+  @@index([courseId])
+  @@index([slug])
+}
+
+model Enrollment {
+  id           String    @id @default(uuid())
+  userId       String
+  courseId     String
+  enrolledAt   DateTime  @default(now())
+  completedAt  DateTime?
+  progress     Float     @default(0) // 0-100
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@unique([userId, courseId])
+  @@map("enrollments")
+  @@index([userId])
+  @@index([courseId])
+}

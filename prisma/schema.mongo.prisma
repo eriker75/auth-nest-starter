@@ -1,0 +1,193 @@
+// MongoDB Schema - Para datos flexibles y no estructurados
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/mongo-client"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGO_URI")
+}
+
+// ========================================
+// MODELOS FLEXIBLES (MongoDB)
+// ========================================
+
+model UserProfile {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @unique // Referencia al User de PostgreSQL
+  bio         String?
+  state       String?
+  address     String?
+  city        String?
+  country     String?
+  postalCode  String?
+  latitude    Float?
+  longitude   Float?
+  socialLinks Json?    // { twitter, linkedin, github, etc }
+  preferences Json?    // Preferencias flexibles del usuario
+  metadata    Json?    // Cualquier metadata adicional
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("user_profiles")
+  @@index([userId])
+}
+
+model UserActivity {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   // Referencia al User de PostgreSQL
+  action     String   // login, logout, view_course, complete_lesson, etc
+  resource   String?  // Recurso afectado
+  resourceId String?  // ID del recurso
+  metadata   Json?    // Información adicional de la actividad
+  ipAddress  String?
+  userAgent  String?
+  timestamp  DateTime @default(now())
+
+  @@map("user_activities")
+  @@index([userId])
+  @@index([action])
+  @@index([timestamp])
+}
+
+model UserSetting {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   // Referencia al User de PostgreSQL
+  settings  Json     // Todas las configuraciones del usuario en formato JSON
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId])
+  @@map("user_settings")
+}
+
+model LessonContent {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  lessonId    String   @unique // Referencia a Lesson de PostgreSQL
+  content     Json     // Contenido flexible del curso (markdown, HTML, bloques, etc)
+  resources   Json?    // { videos: [], audios: [], documents: [] }
+  exercises   Json?    // Ejercicios interactivos
+  attachments Json?    // Archivos adjuntos
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("lesson_contents")
+  @@index([lessonId])
+}
+
+model LessonProgress {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   // Referencia al User de PostgreSQL
+  lessonId        String   // Referencia a Lesson de PostgreSQL
+  enrollmentId    String   // Referencia a Enrollment de PostgreSQL
+  completedSteps  Json?    // { step1: true, step2: false, ... }
+  quizResults     Json?    // Resultados de quizzes
+  timeSpent       Int?     // Tiempo en segundos
+  lastPosition    String?  // Última posición en el contenido
+  notes           String?  // Notas del estudiante
+  isCompleted     Boolean  @default(false)
+  completedAt     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([userId, lessonId])
+  @@map("lesson_progress")
+  @@index([userId])
+  @@index([lessonId])
+  @@index([enrollmentId])
+}
+
+model ChatMessage {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  senderId     String   // User ID
+  receiverId   String?  // User ID (null para mensajes de grupo)
+  roomId       String?  // Para chats grupales o de curso
+  message      String
+  messageType  String   @default("text") // text, image, audio, video, file
+  attachments  Json?    // URLs de archivos adjuntos
+  isRead       Boolean  @default(false)
+  readAt       DateTime?
+  metadata     Json?    // Información adicional
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("chat_messages")
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([roomId])
+  @@index([createdAt])
+}
+
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   // Destinatario
+  type      String   // new_message, course_update, achievement, etc
+  title     String
+  message   String
+  data      Json?    // Datos adicionales de la notificación
+  isRead    Boolean  @default(false)
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+model Achievement {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String
+  type        String   // course_completion, streak, perfect_score, etc
+  title       String
+  description String?
+  icon        String?
+  points      Int?
+  metadata    Json?    // Información adicional del logro
+  earnedAt    DateTime @default(now())
+
+  @@map("achievements")
+  @@index([userId])
+  @@index([type])
+  @@index([earnedAt])
+}
+
+model AuditLog {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String?  // Usuario que realizó la acción
+  action     String   // create, update, delete, login, etc
+  entity     String   // User, Course, Lesson, etc
+  entityId   String?  // ID de la entidad afectada
+  changes    Json?    // Cambios realizados (before/after)
+  ipAddress  String?
+  userAgent  String?
+  metadata   Json?
+  timestamp  DateTime @default(now())
+
+  @@map("audit_logs")
+  @@index([userId])
+  @@index([action])
+  @@index([entity])
+  @@index([timestamp])
+}
+
+model ErrorLog {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String?
+  errorType  String
+  message    String
+  stack      String?
+  context    Json?    // Request, params, body, etc
+  severity   String   @default("error") // error, warning, critical
+  isResolved Boolean  @default(false)
+  resolvedAt DateTime?
+  timestamp  DateTime @default(now())
+
+  @@map("error_logs")
+  @@index([userId])
+  @@index([errorType])
+  @@index([severity])
+  @@index([timestamp])
+}
+

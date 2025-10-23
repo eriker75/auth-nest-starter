@@ -91,63 +91,6 @@ services:
     ports:
       - "${REDIS_EXT_PORT:-6379}:6379"
 
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile.prod
-    container_name: nestjs_backend
-    image: nestjs_backend_prod
-    restart: always
-    ports:
-      - "${BACKEND_PORT:-3000}:3000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 60s
-      timeout: 15s
-      retries: 5
-    depends_on:
-      postgres:
-        condition: service_healthy
-      mongo:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    links:
-      - postgres
-      - mongo
-      - redis
-    env_file:
-      - .env
-    command: npm run start:prod
-    networks:
-      - appnet
-
-  nginxpm:
-    image: jc21/nginx-proxy-manager:latest
-    container_name: nginx_proxy_manager
-    restart: always
-    ports:
-      - "80:80"          # HTTP
-      - "81:81"          # Admin interface
-      - "443:443"        # HTTPS
-    volumes:
-      - nginxpm-data:/data
-      - nginxpm-letsencrypt:/etc/letsencrypt
-    networks:
-      - appnet
-
-  portainer:
-    image: portainer/portainer-ce:latest
-    container_name: portainer
-    restart: always
-    ports:
-      - "9000:9000"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
-    networks:
-      - appnet
-
 networks:
   appnet:
     driver: bridge
@@ -165,12 +108,4 @@ volumes:
   redisdata:
     name: onenglish-redisdata
     external: false
-  nginxpm-data:
-    name: npm-data
-    external: false
-  nginxpm-letsencrypt:
-    name: npm-letsencrypt
-    external: false
-  portainer_data:
-    name: portainer_data
-    external: false
+

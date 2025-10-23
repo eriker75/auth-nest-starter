@@ -1,6 +1,7 @@
 # Nombre de los archivos docker-compose
 COMPOSE_DEV_FILE=docker-compose.dev.yml
 COMPOSE_PROD_FILE=docker-compose.prod.yml
+COMPOSE_SERVICES_FILE=docker-compose.services.yml
 
 # Nombre del proyecto para docker-compose
 PROJECT_NAME=onenglish
@@ -33,6 +34,31 @@ clean-dev:
 destroy-dev:
 	@echo "Destruyendo los contenedores en modo desarrollo..."
 	docker-compose -f $(COMPOSE_DEV_FILE) -p $(PROJECT_NAME)_dev down --volumes --rmi all
+
+# Comandos para servicios (solo infraestructura - para desarrollo local)
+up-services:
+	@echo "Levantando servicios (PostgreSQL, MongoDB, Redis, PgAdmin, Mongo Express)..."
+	docker-compose -f $(COMPOSE_SERVICES_FILE) -p $(PROJECT_NAME)_services up
+
+down-services:
+	@echo "Bajando servicios..."
+	docker-compose -f $(COMPOSE_SERVICES_FILE) -p $(PROJECT_NAME)_services down
+
+logs-services:
+	@echo "Mostrando logs de los servicios..."
+	docker-compose -f $(COMPOSE_SERVICES_FILE) -p $(PROJECT_NAME)_services logs -f
+
+restart-services:
+	@echo "Reiniciando servicios..."
+	docker-compose -f $(COMPOSE_SERVICES_FILE) -p $(PROJECT_NAME)_services restart
+
+ps-services:
+	@echo "Mostrando estado de los servicios..."
+	docker-compose -f $(COMPOSE_SERVICES_FILE) -p $(PROJECT_NAME)_services ps
+
+clean-services:
+	@echo "Limpiando servicios y volúmenes..."
+	docker-compose -f $(COMPOSE_SERVICES_FILE) -p $(PROJECT_NAME)_services down --volumes
 
 # Comandos de producción
 up-prod:
@@ -167,6 +193,14 @@ help:
 	@echo "╔══════════════════════════════════════════════════════════════╗"
 	@echo "║          OneEnglish Backend - Makefile Commands             ║"
 	@echo "╚══════════════════════════════════════════════════════════════╝"
+	@echo ""
+	@echo "🔧 Servicios (Desarrollo Local):"
+	@echo "  make up-services         - Levantar solo servicios (DBs + Admin)"
+	@echo "  make down-services       - Bajar servicios"
+	@echo "  make logs-services       - Ver logs de servicios"
+	@echo "  make restart-services    - Reiniciar servicios"
+	@echo "  make ps-services         - Ver estado de servicios"
+	@echo "  make clean-services      - Limpiar servicios y volúmenes"
 	@echo ""
 	@echo "📦 Comandos de Desarrollo:"
 	@echo "  make up-dev              - Levantar contenedores en desarrollo"

@@ -55,4 +55,9 @@ pids
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
+# Prisma
 /generated/prisma
+/node_modules/@prisma/postgres-client
+/node_modules/@prisma/mongo-client
+prisma/migrations/*
+!prisma/migrations/.gitkeep
