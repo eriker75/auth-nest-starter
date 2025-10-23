@@ -1,0 +1,29 @@
+# Usar la imagen base de Node.js 20
+FROM node:20
+
+# Establecer el directorio de trabajo dentro del contenedor
+WORKDIR /usr/src/app
+
+# Copiar los archivos de dependencias
+COPY package*.json ./
+
+# Instalar las dependencias de producción
+RUN npm i
+
+# Copiar el resto de los archivos de la aplicación
+COPY . .
+
+# Compilar la aplicación
+RUN npm run build
+
+# Instalar PM2 globalmente para la gestión de procesos
+RUN npm install -g pm2
+
+# Darle permisos de ejecución al entrypoint file
+RUN chmod +x /usr/src/app/entrypoint.sh
+
+# Exponer el puerto en el que la aplicación va a correr
+EXPOSE 5000
+
+# Definir el comando de entrada
+ENTRYPOINT ["/bin/sh", "/usr/src/app/entrypoint.sh"]
